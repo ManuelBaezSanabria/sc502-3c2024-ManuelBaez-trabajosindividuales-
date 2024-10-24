@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" >
+    <title>Cálculo de Cargas Sociales e Impuestos</title>
+</head>
+<body>
+    <h1>Calculadora de deducciones salariales</h1>
+    <label for="salarioBruto">Salario Bruto:</label>
+    <input type="number" id="salarioBruto" placeholder="Ingrese su salario bruto" required>
+    <button onclick="calcularDeducciones()">Calcular</button>
+
+    <h2>Resultados</h2>
+    <p>Cargas Sociales: <span id="cargasSociales">0</span></p>
+    <p>Impuesto sobre la Renta: <span id="impuestoRenta">0</span></p>
+    <p>Salario Neto: <span id="salarioNeto">0</span></p>
+
+    <script src="script.js"></script>
+</body>
+</html>
