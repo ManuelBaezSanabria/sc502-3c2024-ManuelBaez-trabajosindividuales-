@@ -52,35 +52,16 @@ function eliminarComentario($id)
         logError("Error eliminando comentario: " . $e->getMessage());
     }
 }
-function obtenerTareasConComentarios() {
+function obtenerComentariosPorTarea($task_id)
+{
     global $pdo;
     try {
-        $sqlTareas = "SELECT id, title, description, due_date FROM tasks ORDER BY id DESC";
-        $stmtTareas = $pdo->query($sqlTareas);
-        $tareas = $stmtTareas->fetchAll(PDO::FETCH_ASSOC);
-
-        $sqlComentarios = "SELECT task_id, id as comment_id, comment FROM comments ORDER BY id ASC";
-        $stmtComentarios = $pdo->query($sqlComentarios);
-        $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC);
-
-        $resultado = [];
-        foreach ($tareas as $tarea) {
-            $resultado[$tarea['id']] = $tarea;
-            $resultado[$tarea['id']]['comments'] = [];
-        }
-
-        foreach ($comentarios as $comentario) {
-            if (isset($resultado[$comentario['task_id']])) {
-                $resultado[$comentario['task_id']]['comments'][] = [
-                    'id' => $comentario['comment_id'],
-                    'description' => $comentario['comment']
-                ];
-            }
-        }
-
-        return array_values($resultado);
+        $sql = "SELECT * FROM comments WHERE task_id = :task_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['task_id' => $task_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
-        logError("Error al obtener tareas y comentarios: " . $e->getMessage());
+        logError("Error al obtener comentarios: " . $e->getMessage());
         return [];
     }
 }
@@ -95,6 +76,8 @@ function getJsonInput()
 
 session_start();
 if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    logDebug($user_id);
     switch ($method) {
         case 'GET':
             if (isset($_GET['task_id'])) {
@@ -102,7 +85,7 @@ if (isset($_SESSION['user_id'])) {
                 echo json_encode($comentarios);
             } else {
                 http_response_code(400);
-                echo json_encode(["error" => "Datos insuficientes"]);
+                echo json_encode(["error" => "Algo sigue faltando"]);
             }
             break;
 
